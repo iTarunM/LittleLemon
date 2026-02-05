@@ -1,6 +1,8 @@
 # django imports
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib import messages
+from datetime import datetime
 
 # REST Framework imports
 from rest_framework.viewsets import ModelViewSet
@@ -35,6 +37,26 @@ def book(request):
         form = BookingForm(request.POST)
         if form.is_valid():
             form.save()
+            name = form.cleaned_data.get("name")
+            booking_date = form.cleaned_data.get("booking_date")
+
+            # Get ordinal suffix for day
+            day = booking_date.day
+            if 10 <= day % 100 <= 20:
+                suffix = "th"
+            else:
+                suffix = {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
+
+            # Format date with ordinal day
+            formatted_date = booking_date.strftime(f"%{day}{suffix} of %B %Y").replace(
+                f"%{day}", f"{day}{suffix}"
+            )
+
+            messages.success(
+                request,
+                f"Table Reservation has been successfully booked! For {name} for the {day}{suffix} of {booking_date.strftime('%B %Y')}.",
+            )
+            return redirect("book")  # Redirect to prevent form resubmission on refresh
     context = {"form": form}
     return render(request, "book.html", context)
 

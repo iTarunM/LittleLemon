@@ -2,6 +2,9 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 
+# local imports
+from restaurant.models import Menu
+
 
 # test for menu items view
 class MenuItemsViewTest(TestCase):
@@ -74,6 +77,66 @@ class SingleMenuItemViewTest(TestCase):
 
     def test_delete_single_menu_item(self):
         response = self.client.delete(f"/restaurant/api/menu/{self.menu_item_id}/")
+        self.assertEqual(response.status_code, 200)
+
+
+# test for static HTML home landing page view
+class homeTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.client.force_login(self.user)
+
+    def test_home_view(self):
+        response = self.client.get("/restaurant/")
+        self.assertEqual(response.status_code, 200)
+
+
+# test for static HTML about page view
+class aboutTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.client.force_login(self.user)
+
+    def test_about_view(self):
+        response = self.client.get("/restaurant/about/")
+        self.assertEqual(response.status_code, 200)
+
+
+# test for static HTML booking page view
+class bookTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.client.force_login(self.user)
+
+    def test_book_view(self):
+        response = self.client.get("/restaurant/book/")
+        self.assertEqual(response.status_code, 200)
+
+
+# test for static HTML menu page view
+class menuTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.client.force_login(self.user)
+
+    def test_menu_view(self):
+        response = self.client.get("/restaurant/menu/")
+        self.assertEqual(response.status_code, 200)
+
+
+# test for static HTML individual menu item page view
+class display_menu_itemTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.client.force_login(self.user)
+        self.menu_item = Menu.objects.create(
+            name="Pasta",
+            price=12.5,
+            menu_item_description="Delicious pasta with tomato sauce",
+        )
+
+    def test_display_menu_item(self):
+        response = self.client.get(f"/restaurant/menu/{self.menu_item.id}/")
         self.assertEqual(response.status_code, 200)
 
 
