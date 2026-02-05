@@ -3,12 +3,13 @@ from django.contrib.auth.models import User
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateAPIView,
     DestroyAPIView,
 )
+from rest_framework.decorators import api_view, permission_classes
 
 from .models import Booking, Menu
 from .serializers import BookingSerializer, MenuSerializer, UserSerializer
@@ -18,15 +19,22 @@ def index(request):
     return render(request, "index.html", {})
 
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def secure_view(request):
+    return Response({"message": "needs authentication"})
+
+
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 
 class BookingViewSet(ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         bookings = Booking.objects.all()
@@ -44,6 +52,7 @@ class BookingViewSet(ModelViewSet):
 class MenuItemsView(ListCreateAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         menu_items = Menu.objects.all()
@@ -61,6 +70,7 @@ class MenuItemsView(ListCreateAPIView):
 class SingleMenuItemView(RetrieveUpdateAPIView, DestroyAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
         try:
