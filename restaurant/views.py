@@ -9,7 +9,6 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView,
     DestroyAPIView,
 )
-from rest_framework.decorators import api_view, permission_classes
 
 from .models import Booking, Menu
 from .serializers import BookingSerializer, MenuSerializer, UserSerializer
@@ -17,12 +16,6 @@ from .serializers import BookingSerializer, MenuSerializer, UserSerializer
 
 def index(request):
     return render(request, "index.html", {})
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def secure_view(request):
-    return Response({"message": "needs authentication"})
 
 
 class UserViewSet(ModelViewSet):
@@ -45,7 +38,7 @@ class BookingViewSet(ModelViewSet):
         serializer = BookingSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"status": "success", "data": serializer.data})
+            return Response({"status": "Success!", "data": serializer.data})
         return Response(serializer.errors, status=400)
 
 
@@ -63,7 +56,7 @@ class MenuItemsView(ListCreateAPIView):
         serializer = MenuSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"status": "success", "data": serializer.data})
+            return Response({"status": "Success!", "data": serializer.data})
         return Response(serializer.errors, status=400)
 
 
@@ -76,7 +69,7 @@ class SingleMenuItemView(RetrieveUpdateAPIView, DestroyAPIView):
         try:
             menu_item = Menu.objects.get(pk=pk)
         except Menu.DoesNotExist:
-            return Response({"error": "Menu item not found"}, status=404)
+            return Response({"error": "Menu item not found!"}, status=404)
 
         serializer = MenuSerializer(menu_item)
         return Response(serializer.data)
@@ -85,19 +78,19 @@ class SingleMenuItemView(RetrieveUpdateAPIView, DestroyAPIView):
         try:
             menu_item = Menu.objects.get(pk=pk)
         except Menu.DoesNotExist:
-            return Response({"error": "Menu item not found"}, status=404)
+            return Response({"error": "Menu item not found!"}, status=404)
 
         serializer = MenuSerializer(menu_item, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"status": "success", "data": serializer.data})
+            return Response({"status": "Success!", "data": serializer.data})
         return Response(serializer.errors, status=400)
 
     def delete(self, request, pk):
         try:
             menu_item = Menu.objects.get(pk=pk)
         except Menu.DoesNotExist:
-            return Response({"error": "Menu item not found"}, status=404)
+            return Response({"error": "Menu item not found!"}, status=404)
 
         menu_item.delete()
-        return Response({"status": "success", "message": "Menu item deleted"})
+        return Response({"status": "Success!", "message": "Menu item deleted!"})
