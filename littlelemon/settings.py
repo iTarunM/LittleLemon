@@ -127,6 +127,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# rest framework settings
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
@@ -138,6 +139,7 @@ REST_FRAMEWORK = {
     ),
 }
 
+# djoser settings
 DJOSER = {
     "USER_ID_FIELD": "username",
 }
